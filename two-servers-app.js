@@ -1,28 +1,66 @@
 var http = require("http");
 
-//listen to Port=8080
-var PORT1 = 7000;
-var PORT2 = 7500;
+var PORT = 7000;
 
-function handleRequest(request, response){
-    response.end("\nHey! Good Morning. I like the fact that you are so dedicated to your work.\nKeep it up!!!" +request.url);
+function handleRequest(req, res){
+  var path = req.url
+  switch(path){
+    case "/":
+      displayRoot(path, req, res);
+      break;
+    case "/portfolio":
+      displayPortfolio(path, req, res);
+      break
+    default:
+      display404(path, req, res);
+      break;
+  }
+  //response.end(`I SAY SOMETHING NICE, AS HUMANS.. I MEAN WE.... OFTEN DO`);
 }
 
-function handleMeanRequest(request, response){
-    response.end(`\nYou came back? When will you stop annoying me!!!` +request.url);
+function displayRoot(url, req, res){
+  var myHTML =
+  `
+    <html>
+      <body>
+        <h1>Home Page</h1>
+        <a href="/portfolio">Portfolio</a>
+      </body>
+    </html>
+  `
+  res.writeHead(200, { "Content-Type": "text/html"})
+  res.end(myHTML);
 }
 
-//make a server; whenever a request comes in, handle it using handleRequest()
+function displayPortfolio(url, req, res){
+  var myHTML =
+  `
+    <html>
+      <body>
+        <h1>My Portfolio Page</h1>
+        <a href="/">Home</a>
+      </body>
+    </html>
+  `
+  res.writeHead(200, { "Content-Type": "text/html"})
+  res.end(myHTML);
+}
+
+function display404(url, req, res){
+  var myHTML =
+  `
+    <html>
+      <body>
+        <h1>PAY NO ATTENTION TO THE MAN BEHIND THE CURTAIN (Page: ${url} not found)</h1>
+      </body>
+    </html>
+  `
+  res.writeHead(404, { "Content-Type": "text/html"})
+  res.end(myHTML);
+}
+
 var server = http.createServer(handleRequest);
-var serverMean = http.createServer(handleMeanRequest);
 
-//server actually start listening to port using listen(Port, callback-function)
-server.listen(PORT1, function(){
-    console.log(`Server listening on http://localhost:${PORT1}`);
-    
-})
-
-serverMean.listen(PORT2, function(){
-    console.log(`Server listening on http://localhost:${PORT2}`);
-    
+server.listen(PORT, function(){
+  console.log(`Server listening on http://localhost:${PORT}`);
 })
